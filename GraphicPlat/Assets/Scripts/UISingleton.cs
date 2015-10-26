@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class UISingleton : MonoBehaviour {
 
 	public static UISingleton mUISingle;
-
+	public static GameObject dataObj;
 	public Text btnMes;
 
 	public static UISingleton UIsingleInstance
@@ -26,6 +26,8 @@ public class UISingleton : MonoBehaviour {
 	public GameObject btn_graphics;
 	public GameObject btn_tools;
 	public GameObject fgz;
+	public GameObject trashPanel;
+	public GameObject savePanel;
 	// Use this for initialization
 	void Start () {
 	
@@ -50,7 +52,9 @@ public class UISingleton : MonoBehaviour {
 		btnMes.text = graphicMes;
 		if (GameControl.state == Clickstate.drawGraphic) {
 			GameControl.state = Clickstate.oprateGraphic;
-		} else {
+		} 
+		else 
+		{
 			GameControl.state = Clickstate.drawGraphic;
 		}
 	}
@@ -95,7 +99,8 @@ public class UISingleton : MonoBehaviour {
 	bool hasfgz=true;
 	public void btn_fgz()
 	{
-		for (int i=0; i<fgz.transform.childCount; i++) {
+		for (int i=0; i<fgz.transform.childCount; i++) 
+		{
 			if (hasfgz)
 			{
 				fgz.transform.GetChild(i).gameObject.SetActive(false);
@@ -133,6 +138,7 @@ public class UISingleton : MonoBehaviour {
 			                                      "looptype",iTween.LoopType.none));
 		}
 	}
+
 	public void btn_colorchange(GameObject sender)
 	{
 		if (GameControl.ControlObj != null) {
@@ -159,20 +165,68 @@ public class UISingleton : MonoBehaviour {
 			}
 		}
 	}
-	public void btn_trash(GameObject parent1)
+	public IEnumerator setCaptureMode()
+	{	
+		yield return new WaitForSeconds(2.0f);
+		Application.CaptureScreenshot("temp.png");
+	}
+	public void saveImage()
 	{
-		for (int i=0; i<parent1.transform.childCount; i++) {
+		savePanel.SetActive (false);
+		//		Hide_menu ();
+//		CallOS.uploadDataString (UrlEncode(savetoServer1()));
+//		dataObj = GameObject.Find ("Griphics");
+		Debug.Log(GameControl.gameControlInstance.ObjTostring());
+		GameControl.gameControlInstance.stringToObj(GameControl.gameControlInstance.ObjTostring());
+//		Debug.Log (dataObj.transform.localScale);
+		if (Is_right)
+		{
+			Application.CaptureScreenshot ("temp.png");
+		}
+		else 
+		{
+			btn_right();
+//			Is_right=true;
+			StartCoroutine("setCaptureMode");
+		}
+//		Application.LoadLevelAdditive(1);
+	}
+//click save button and trash button
+	public void btn_click(string btnname)
+	{
+		switch (btnname) 
+		{
+		case "btn_save":
+			savePanel.SetActive (true);
+			break;
+		case "btn_trash":
+			trashPanel.SetActive (true);
+			break;
+		default :
+			break;
+		}
+	}
+	public void btn_trash()
+	{
+		GameObject parent1 = GameObject.Find ("Griphics");
+		for (int i=0; i<parent1.transform.childCount; i++)
+		{
 			Destroy(parent1.transform.GetChild(i).gameObject);
 		}
-
-	}
-	public void clearLenth(GameObject parent2)
-	{
+		GameObject parent2= GameObject.Find ("linelenth");
 		int childcount = parent2.transform.childCount;
 		for (int i=0; i<childcount; i++) 
 		{
 			Destroy(parent2.transform.GetChild(i).gameObject);
 		}
+		trashPanel.SetActive (false);
+	}
+	public void btn_cancel()
+	{
+		if(trashPanel.activeSelf)
+			trashPanel.SetActive (false);
+		if (savePanel.activeSelf)
+			savePanel.SetActive (false);
 	}
 	bool Is_right=false;
 	public GameObject right_mune;
@@ -181,12 +235,13 @@ public class UISingleton : MonoBehaviour {
 		Hashtable right_args = new Hashtable();
 		Hashtable left_args = new Hashtable();
 		float move_x;
-		if (!Is_right) {
+		if (!Is_right)
+		{
 			Is_right=true;
 			right_mune.transform.GetComponent<RectTransform>().pivot=new Vector2(-0.45f,0.5f);
 			return;
 		}
-		if (Is_right) 
+		if(Is_right) 
 		{
 			Is_right=false;
 			right_mune.transform.GetComponent<RectTransform>().pivot=new Vector2(0.5f,0.5f);

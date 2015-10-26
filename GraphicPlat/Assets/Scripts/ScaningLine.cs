@@ -15,12 +15,12 @@ public class ScaningLine{
 	
 	public void ScanLinePolygonFill(GameObject _parent)
 	{
-		List<List<Vector3>> scanscross = new List<List<Vector3>> ();
+		List<List<Vector3>> scanscross = new List<List<Vector3>>();
 		float ymax = 0;
 		float ymin = 0;
 		GetPolygonMinMax (out ymax,out ymin);
 		this.SCFcount = (int)((ymax - ymin) * 100);
-		for (int i=0; i<=SCFcount; i++) {
+		for (int i=0; i<=SCFcount; i++){
 			scanscross.Add(getCrossPos(ymin+0.01f*i));
 		}
 		checkScanLine (scanscross,_parent);
@@ -70,7 +70,7 @@ public class ScaningLine{
 		triangles[5] =2;
 		//绘制三角形
 		mesh.vertices = vertices;
-		mesh.triangles = triangles;
+		mesh.triangles=triangles;
 		obj.GetComponent<MeshRenderer>().material=MatTools.getPlaneMat(_color); 
 		_color.a = 0.5f;
 		obj.GetComponent<MeshRenderer> ().material.color = _color;

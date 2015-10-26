@@ -54,6 +54,7 @@
      <Compile Include="Assets\Scripts\creatGraphic\MLine.cs" />
      <Compile Include="Assets\Scripts\creatGraphic\MatTools.cs" />
      <Compile Include="Assets\Scripts\creatGraphic\creat_Graphic.cs" />
+     <Compile Include="Assets\Scripts\creatGraphic\graphicData.cs" />
      <Compile Include="Assets\Scripts\creatGraphic\graphicMes.cs" />
      <Compile Include="Assets\Scripts\gameRun.cs" />
      <Compile Include="Assets\Scripts\iTween.cs" />

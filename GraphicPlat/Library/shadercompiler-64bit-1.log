@@ -1,3 +1,6 @@
 Base path: /Applications/Unity/Unity.app/Contents
-Pipe name: \\.\pipe\UnityShaderCompiler-64bit-1-1959691008
+Pipe name: \\.\pipe\UnityShaderCompiler-64bit-1-2081084160
 Cmd: getPlatforms
+Cmd: preprocess
+  error: 2 plat 16 at (12): Surface shader function 'surf' not found
+  insize=701 outsize=458 ok=0

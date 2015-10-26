@@ -263,11 +263,15 @@ namespace creat_Graphic
 	{
 		public void drawRLine(Vector3 pos1,Vector3 pos2)
 		{
+			List<Vector3> pointMes = new List<Vector3> ();
+			pointMes.Add (pos1);
+			pointMes.Add (pos2);
 			_transName="Rline"+ GameControl.findCount (graphicStyle.right_line).ToString();
 			MLine line = new MLine (pos1,pos2,Color.yellow,GameControl.graphicsParent.transform);
 			line.obj.name = _transName;
 			_transStyle = graphicStyle.right_line;
 			line.obj.AddComponent<graphicMes>().setMes(_transName,_transStyle);
+			line.obj.GetComponent<graphicMes> ().setPointMes (pointMes);
 			GameObject.Find ("linestart").transform.parent = line.obj.transform;
 			GameObject.Find("linestart").name=_transName+"start";
 			GameObject.Find ("linend").transform.parent = line.obj.transform;

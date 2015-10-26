@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using creat_Graphic;
 using UnityEngine.EventSystems;
+using System.Text.RegularExpressions;
 
 public enum Clickstate
 {
@@ -215,7 +216,15 @@ public class GameControl : MonoBehaviour {
 			_trans.position = new Vector3(_vec3TargetWorldSpace.x,_vec3TargetWorldSpace.y,_trans.position.z); 
 			yield return new WaitForFixedUpdate(); 
 		}
+		updateVertexMes(_trans);
 		yield return null;
+	}
+	public void updateVertexMes(Transform target)
+	{
+		int tertexCount = target.GetComponent<graphicMes> ().graphicPointsMes.Count;
+		for (int i=0; i<tertexCount; i++) {
+			target.GetComponent<graphicMes> ().graphicPointsMes[i]=GameObject.Find(target.name+"point"+i.ToString()).transform.position;
+		}
 	}
 	IEnumerator rotateGraphic()
 	{
@@ -233,6 +242,7 @@ public class GameControl : MonoBehaviour {
 			}
 			yield return new WaitForFixedUpdate(); 
 		}
+		updateVertexMes(_trans);
 		yield return null;
 	}
 	IEnumerator scalGraphic()
@@ -255,6 +265,7 @@ public class GameControl : MonoBehaviour {
 			}
 			yield return new WaitForFixedUpdate(); 
 		}
+		updateVertexMes(_trans);
 		yield return null;
 	}
 	void move_rotate()
@@ -767,5 +778,73 @@ public class GameControl : MonoBehaviour {
 			lenthPos=new Vector3[2];
 		}
 		clickCount = (clickCount>0)?0:1;
+	}
+	public string ObjTostring()
+	{
+		string objectString="";
+		int childCount = graphicsParent.transform.childCount;
+		for (int i=0; i<childCount-1; i++) 
+		{
+			objectString+=graphicMes.getGraphicMes(graphicsParent.transform.GetChild(i))+"graphicSplit";
+		}
+		objectString += graphicMes.getGraphicMes (graphicsParent.transform.GetChild (childCount-1));
+		return objectString;
+	}
+	public void stringToObj(string serverMes)
+	{
+		string[] graphics = Regex.Split(serverMes,"graphicSplit");
+		int graphicCount = graphics.Length;
+		for (int i=0; i<graphicCount; i++) 
+		{
+			string[] mgraphic=Regex.Split(graphics[i],"split");
+			if(mgraphic[1]!="right_line")
+			{
+				List<Vector3> mgraphicPos=new List<Vector3>();
+				Vector3 serverGraphicPos=stringToVector3(mgraphic[2]);
+				Color serverColor=stringToColor(mgraphic[5]);
+				string[] mgraphicPosStr=mgraphic[6].Split(new char[]{'_'});
+				for(int j=0;j<mgraphicPosStr.Length;j++)
+				{
+					mgraphicPos.Add(stringToVector3(mgraphicPosStr[j]));
+				}
+				CreatServerObj(mgraphicPos,serverGraphicPos,serverColor);
+			}
+		}
+	}
+	public Vector3 stringToVector3(string vecStr)
+	{
+		string[] vecs = vecStr.Split (new char[]{'(',',',')'},System.StringSplitOptions.RemoveEmptyEntries);
+		Vector3 _point = new Vector3 ();
+		_point.x = float.Parse (vecs[0]);
+		_point.y = float.Parse (vecs[1]);
+		_point.z = float.Parse (vecs[2]);
+		return _point;
+	}
+	public void CreatServerObj(List<Vector3> graphiVertex,Vector3 graphicPos,Color _color)
+	{
+		creatmGraphic serverGraphic=new creatmGraphic();
+		serverGraphic.InitGraphic(graphicPos);
+		serverGraphic.drawGraphic(graphiVertex);
+		serverGraphic.creatLine(graphiVertex);
+		serverGraphic.creatPoint(graphiVertex);
+		serverGraphic._transParent.GetComponent<graphicMes>().setPointMes(graphiVertex); 
+		serverGraphic._transParent.transform.position = graphicPos;
+		for (int i=0; i<serverGraphic._transParent.transform.childCount; i++) 
+		{
+			if(serverGraphic._transParent.transform.GetChild(i).name=="plane")
+			{
+				serverGraphic._transParent.transform.GetChild(i).GetComponent<MeshRenderer>().material.color=_color;
+			}
+		}
+	}
+	public Color stringToColor(string serverStr)
+	{
+		string[] vecs = serverStr.Split (new char[]{'R','G','B','A','(',',',')'},System.StringSplitOptions.RemoveEmptyEntries);
+		Color _color=new Color();
+		_color.r = float.Parse (vecs [0]);
+		_color.g = float.Parse (vecs [1]);
+		_color.b = float.Parse (vecs [2]);
+		_color.a = float.Parse (vecs [3]);
+		return _color;
 	}
 }
