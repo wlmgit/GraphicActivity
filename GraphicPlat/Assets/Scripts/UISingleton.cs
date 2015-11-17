@@ -4,9 +4,9 @@ using UnityEngine.UI;
 
 public class UISingleton : MonoBehaviour {
 
-	public static UISingleton mUISingle;
-	public static GameObject dataObj;
-	public Text btnMes;
+	public static UISingleton mUISingle;//UI单例
+	public static GameObject dataObj;//gameobj数据
+	public Text btnMes;//显示操作提示
 
 	public static UISingleton UIsingleInstance
 	{
@@ -19,13 +19,13 @@ public class UISingleton : MonoBehaviour {
 			return mUISingle;
 		}
 	}
-	#region
+	#region 画线和画图形提示
 	private string lineMes="點選2點畫出直線";
 	private string graphicMes="點選各頂點后，再點選起點完成圖形";
 	#endregion
 	public GameObject btn_graphics;
 	public GameObject btn_tools;
-	public GameObject fgz;
+	public GameObject fgz;//方格子开关
 	public GameObject trashPanel;
 	public GameObject savePanel;
 	// Use this for initialization
@@ -38,15 +38,24 @@ public class UISingleton : MonoBehaviour {
 	{
 	
 	}
+	/// <summary>
+	/// 画线状态调节
+	/// </summary>
 	public void lineClick()
 	{
 		btnMes.text = lineMes;
-		if (GameControl.state == Clickstate.drawLine) {
+		if (GameControl.state == Clickstate.drawLine)
+		{
 			GameControl.state = Clickstate.oprateGraphic;
-		} else {
+		} 
+		else 
+		{
 			GameControl.state = Clickstate.drawLine;
 		}
 	}
+	/// <summary>
+	/// 画任意图形
+	/// </summary>
 	public void graphicClick()
 	{
 		btnMes.text = graphicMes;
@@ -58,6 +67,9 @@ public class UISingleton : MonoBehaviour {
 			GameControl.state = Clickstate.drawGraphic;
 		}
 	}
+	/// <summary>
+	/// 改变状态到操作图形
+	/// </summary>
 	public void changeState()
 	{
 		GameControl.state = Clickstate.oprateGraphic;
@@ -83,6 +95,10 @@ public class UISingleton : MonoBehaviour {
 		GameControl.state = Clickstate.cutGraphic;
 		btnMes.text = "點選要分割的圖形";
 	}
+	/// <summary>
+	/// 提示信息修改
+	/// </summary>
+	/// <param name="str">String.</param>
 	public void setbtnMes(string str)
 	{
 		btnMes.text = str;
@@ -114,7 +130,7 @@ public class UISingleton : MonoBehaviour {
 	}
 	public void btn_bzlenth()
 	{
-		GameObject.Find ("gameControl").GetComponent<GameControl> ().InitClickCount ();
+		GameObject.Find ("gameControl").GetComponent<GameControl> ().InitClickCount();
 		GameControl.state = Clickstate.linelenth;
 		btnMes.text = "點選兩點顯示水平長度或垂直長度";
 	}
@@ -141,7 +157,8 @@ public class UISingleton : MonoBehaviour {
 
 	public void btn_colorchange(GameObject sender)
 	{
-		if (GameControl.ControlObj != null) {
+		if (GameControl.ControlObj != null)
+		{
 			for(int i=0;i<GameControl.ControlObj.transform.childCount;i++)
 			{
 				if(GameControl.ControlObj.transform.GetChild(i).name=="plane")
@@ -165,6 +182,10 @@ public class UISingleton : MonoBehaviour {
 			}
 		}
 	}
+	/// <summary>
+	/// 上传图片
+	/// </summary>
+	/// <returns>The capture mode.</returns>
 	public IEnumerator setCaptureMode()
 	{	
 		yield return new WaitForSeconds(2.0f);
@@ -209,7 +230,7 @@ public class UISingleton : MonoBehaviour {
 	public void btn_trash()
 	{
 		GameObject parent1 = GameObject.Find ("Griphics");
-		for (int i=0; i<parent1.transform.childCount; i++)
+		for(int i=0; i<parent1.transform.childCount; i++)
 		{
 			Destroy(parent1.transform.GetChild(i).gameObject);
 		}

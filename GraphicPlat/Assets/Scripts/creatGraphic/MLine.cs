@@ -119,7 +119,7 @@ public class MLine{
 	}
 	private void setMash(Vector3 _point1,Vector3 _point2)
 	{
-		MeshFilter meshFilter = obj.GetComponent<MeshFilter> ();     
+		MeshFilter meshFilter = obj.GetComponent<MeshFilter>();     
 		Mesh mesh = meshFilter.mesh; 
 		bool istr = (_point1.x.ToString().Equals( _point2.x.ToString()));
 		if ((_point1.x.ToString().Equals( _point2.x.ToString()))) 
@@ -163,7 +163,6 @@ public class MLine{
 					new Vector3(_point2.x-0.1f,_point2.y-0.1f*k+0.03f,_point2.z),
 					new Vector3(_point2.x-0.1f,_point2.y-0.1f*k-0.03f,_point2.z)
 				}; 
-
 			}
 		}
 		int[] mtriangle=new int[12] ;

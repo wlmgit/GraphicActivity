@@ -56,9 +56,11 @@
      <Compile Include="Assets\Scripts\creatGraphic\creat_Graphic.cs" />
      <Compile Include="Assets\Scripts\creatGraphic\graphicData.cs" />
      <Compile Include="Assets\Scripts\creatGraphic\graphicMes.cs" />
+     <Compile Include="Assets\Scripts\cutGraphic.cs" />
      <Compile Include="Assets\Scripts\gameRun.cs" />
      <Compile Include="Assets\Scripts\iTween.cs" />
-     <None Include="Assets\Materail\taetshader.shader" />
+     <None Include="Assets\Materail\NewShader.shader" />
+     <None Include="Assets\Materail\slodicolor.shader" />
  <Reference Include="UnityEngine.UI">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

@@ -68,7 +68,7 @@ public class GameControl : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
-		InitPoints_drawLine ();
+		InitPoints_drawLine();
 	}
 	
 	// Update is called once per frame
@@ -103,13 +103,14 @@ public class GameControl : MonoBehaviour {
 				}
 				#endif
 			}
-			if (state == Clickstate.drawLine) {
+			if (state == Clickstate.drawLine) 
+			{
 				if (Input.GetMouseButtonDown (0))
 				{
 					pointTline();
 				}
 			}
-			if (state == Clickstate.drawGraphic) {
+			if (state == Clickstate.drawGraphic){
 				if(Input.GetMouseButtonDown(0))
 				{
 					pointTgraphic();
@@ -183,7 +184,8 @@ public class GameControl : MonoBehaviour {
 		RaycastHit mhit;
 		if (Physics.Raycast (camRay, out mhit) && mhit.transform.parent.parent.name.Equals ("Griphics") && Input.GetMouseButtonDown (0)) {
 			if (ControlObj != null) {
-				foreach (Transform child in ControlObj.transform) {
+				foreach (Transform child in ControlObj.transform) 
+				{
 					if (child.name == "line")
 						child.GetComponent<LineRenderer> ().SetColors (Color.black, Color.black);
 				}
@@ -366,6 +368,8 @@ public class GameControl : MonoBehaviour {
 			{
 				Destroy(GameObject.Find("linestart"));
 			}
+			//change state;
+			state=Clickstate.oprateGraphic;
 		}
 	clickCount = (clickCount > 0) ? 0 : 1;
 	}
@@ -416,6 +420,8 @@ public class GameControl : MonoBehaviour {
 				mGraphic.creatPoint(graphicPoints);
 				mGraphic._transParent.GetComponent<graphicMes>().setPointMes(graphicPoints); 
 				graphicPoints=new List<Vector3>();
+				//change state;
+				state=Clickstate.oprateGraphic;
 			}
 		}
 		clickCount++;
@@ -425,7 +431,17 @@ public class GameControl : MonoBehaviour {
 		Vector3 pos = obj.transform.position;
 		GameObject copyObj =(GameObject)Instantiate (obj,new Vector3 (pos.x+1f,pos.y-0.5f,pos.z),transform.rotation);
 		copyObj.name = obj.name+"copy";
+		for (int i=0; i<copyObj.transform.childCount; i++)
+		{
+			if(copyObj.transform.GetChild(i).name.Contains(obj.name))
+			{
+				string newname=copyObj.transform.GetChild(i).name.Replace(obj.name,copyObj.name);
+				copyObj.transform.GetChild(i).name=newname;
+			}
+		}
 		copyObj.transform.parent = graphicsParent.transform;
+		//change state;
+		state=Clickstate.oprateGraphic;
 	}
 	public void updateListPos()
 	{
@@ -441,31 +457,44 @@ public class GameControl : MonoBehaviour {
 	private Vector3 startPos;
 	private int startFlag;
 	private Vector3 endPos;
+	private Vector3 mouseStartpos;
+	private Vector3 mouseEndPos;
 	private int endFlag;
+	private List<Vector3> parentList=new List<Vector3>();
+	private List<List<Vector3>> childList = new List<List<Vector3>>();
 	private List<Vector3> childList1=new List<Vector3>();
 	private List<Vector3> childList2=new List<Vector3>();
 	public void InitClickCount()
 	{
-		clickCount = 0;
+		clickCount=0;
 	}
 	IEnumerator cutGraphic()
 	{
-		if (Input.GetMouseButtonDown (0) && clickCount == 0) {
+	
+		if (Input.GetMouseButtonDown (0) && clickCount == 0){
 			changelControl ();
 			if(changeObj)
 			{
 				updateListPos();
+				parentList=new List<Vector3>();
+				for(int i=0;i<ControlObj.GetComponent<graphicMes>().graphicPointsMes.Count;i++)
+				{
+					parentList.Add(ControlObj.GetComponent<graphicMes>().graphicPointsMes[i]);
+				}
 				childList1=new List<Vector3>();
 				childList2=new List<Vector3>();
+				childList=new List<List<Vector3>>();
 			}
 			else
 			{
 				clickCount=-1;
 			}
 		}
-		if (isCut && Input.GetMouseButtonDown (0) && clickCount == 1) {
-			startPos=setMousePos(Camera.main.ScreenToWorldPoint(Input.mousePosition),out startFlag);
-		    GameObject cutStart=(GameObject)Instantiate (pointPrefab,startPos,transform.rotation);
+		if (isCut && Input.GetMouseButtonDown (0) && clickCount == 1){
+			mouseStartpos=Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			mouseStartpos.z=0;
+//			startPos=setMousePos(Camera.main.ScreenToWorldPoint(Input.mousePosition),out startFlag);
+		    GameObject cutStart=(GameObject)Instantiate (pointPrefab,mouseStartpos,transform.rotation);
 			cutStart.name="cutStart";
 		}
 		if (isCut && Input.GetMouseButtonDown (0) && clickCount >= 2) {
@@ -473,61 +502,30 @@ public class GameControl : MonoBehaviour {
 			{
 				if(GameObject.Find("cutline")!=null)
 					Destroy(GameObject.Find("cutline"));
-				endPos=Camera.main.ScreenToWorldPoint(Input.mousePosition);
-				endPos=new Vector3(endPos.x,endPos.y,startPos.z);
-				MLine line=new MLine(startPos,endPos,Color.black,GameObject.Find("cutStart").transform);
+				mouseEndPos=Camera.main.ScreenToWorldPoint(Input.mousePosition);
+				mouseEndPos.z=0;
+				MLine line=new MLine(mouseStartpos,mouseEndPos,Color.black,GameObject.Find("cutStart").transform);
 				line.obj.name="cutline";
 				yield return new WaitForFixedUpdate();
 			}
-			if(Input.GetMouseButtonUp(0))
-			{
 				if(GameObject.Find("cutline")!=null)
-					Destroy(GameObject.Find("cutline"));
-				endPos=Camera.main.ScreenToWorldPoint(Input.mousePosition);
-				endPos=setMousePos(endPos,out endFlag);
-				setchildList();
+					Destroy(GameObject.Find("cutStart"));
+			//crosspoint and crossflag
+			cutGraphic mcut=new cutGraphic();
+			mcut.initCutGriphic(mouseStartpos,mouseEndPos);
+			if(mcut.cutOperate())
+			{
 				Destroy(ControlObj);
-				Destroy(GameObject.Find("cutStart"));
 				yield return new WaitForFixedUpdate();
-				setChildgraphic(childList1);
-				setChildgraphic(childList2);
+				setChildgraphic(mcut.childList);
+				setChildgraphic(mcut.originList);
 			}
 			clickCount=-1;
+			//change state;
+			state=Clickstate.oprateGraphic;
 		}
 		clickCount++;
 		yield return null;
-	}
-	public void setchildList()
-	{
-		if(startFlag>endFlag)
-		{
-			int temp=startFlag;
-			Vector3 tempvec=startPos;
-			startFlag=endFlag;
-			startPos=endPos;
-			endFlag=temp;
-			endPos=tempvec;
-		}
-		if(startFlag!=endFlag)
-		{
-			childList1.Add(startPos);
-			for(int i=startFlag;i<endFlag;i++)
-			{
-				childList1.Add(ControlObj.GetComponent<graphicMes>().graphicPointsMes[i+1]);
-			}
-			childList1.Add(endPos);
-			childList1.Add(startPos);
-			for(int i=0;i<=startFlag;i++)
-			{
-				childList2.Add(ControlObj.GetComponent<graphicMes>().graphicPointsMes[i]);
-			}
-			childList2.Add(startPos);
-			childList2.Add(endPos);
-			for(int i=endFlag;i<ControlObj.GetComponent<graphicMes>().graphicPointsMes.Count-1;i++)
-			{
-				childList2.Add(ControlObj.GetComponent<graphicMes>().graphicPointsMes[i+1]);
-			}
-		}
 	}
 	public void setChildgraphic(List<Vector3> pos)
 	{
@@ -542,7 +540,7 @@ public class GameControl : MonoBehaviour {
 	{
 		Vector3 snapPos = new Vector3 ();
 		int lineCount = ControlObj.GetComponent<graphicMes> ().graphicPointsMes.Count-1;
-		float[] pointdis=new float[lineCount] ;
+		float[] pointdis=new float[lineCount];
 		for (int i=0; i<lineCount; i++)
 		{
 			Vector3 pos1=ControlObj.GetComponent<graphicMes> ().graphicPointsMes[i];
@@ -566,6 +564,7 @@ public class GameControl : MonoBehaviour {
 				flagOnline.Add(i);
 			}
 		}
+
 		maindis = posOnline [0];
 		flag = flagOnline [0];
 		for (int i=0; i<posOnline.Count; i++) 
@@ -584,7 +583,8 @@ public class GameControl : MonoBehaviour {
 	public Vector3 posOnLine(Vector3 startpos,Vector3 endpos,Vector3 mousepos)
 	{
 		Vector3 snapPos = new Vector3 ();
-		if (startpos.x != endpos.x&&startpos.y != endpos.y) {
+		if (startpos.x != endpos.x&&startpos.y != endpos.y) 
+		{
 			float k=(endpos.y-startpos.y)/(endpos.x-startpos.x);
 			float snapx=(mousepos.y+((1/k)*mousepos.x-startpos.y+k*startpos.x))/(k+1/k);
 			snapPos = new Vector3 (snapx,endpos.y-((endpos.y-startpos.y)/(endpos.x-startpos.x)*(endpos.x-snapx)),startpos.z);
@@ -619,10 +619,12 @@ public class GameControl : MonoBehaviour {
 		}
 		if (graphicFirst != null && graphicSecond != null) 
 		{
-			if(isHB(graphicFirst.GetComponent<graphicMes>().graphicPointsMes,graphicSecond.GetComponent<graphicMes>().graphicPointsMes))
+			if(isHB(graphicFirst.GetComponent<graphicMes>().graphicPointsMes,graphicSecond.GetComponent<graphicMes>().graphicPointsMes)&&graphicFirst!=graphicSecond)
 			{
 				StartCoroutine("doHB");
 			}
+			//change state;
+			state=Clickstate.oprateGraphic;
 		}
 		clickCount++;
 	}
@@ -718,7 +720,7 @@ public class GameControl : MonoBehaviour {
 			start.transform.position=lenthPos[0];
 			start.name="lenthstart";
 		}
-		if (Input.GetMouseButtonDown (0) && clickCount == 1) 
+		if(Input.GetMouseButtonDown (0) && clickCount == 1) 
 		{
 			lenthPos[1]=Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			lenthPos[1].z=10;
@@ -776,6 +778,8 @@ public class GameControl : MonoBehaviour {
 				shuzi.GetComponent<TextMesh>().text=lenth;
 			}
 			lenthPos=new Vector3[2];
+			//change state;
+			state=Clickstate.oprateGraphic;
 		}
 		clickCount = (clickCount>0)?0:1;
 	}
@@ -829,7 +833,7 @@ public class GameControl : MonoBehaviour {
 		serverGraphic.creatPoint(graphiVertex);
 		serverGraphic._transParent.GetComponent<graphicMes>().setPointMes(graphiVertex); 
 		serverGraphic._transParent.transform.position = graphicPos;
-		for (int i=0; i<serverGraphic._transParent.transform.childCount; i++) 
+		for(int i=0;i<serverGraphic._transParent.transform.childCount;i++) 
 		{
 			if(serverGraphic._transParent.transform.GetChild(i).name=="plane")
 			{
@@ -841,10 +845,10 @@ public class GameControl : MonoBehaviour {
 	{
 		string[] vecs = serverStr.Split (new char[]{'R','G','B','A','(',',',')'},System.StringSplitOptions.RemoveEmptyEntries);
 		Color _color=new Color();
-		_color.r = float.Parse (vecs [0]);
-		_color.g = float.Parse (vecs [1]);
-		_color.b = float.Parse (vecs [2]);
-		_color.a = float.Parse (vecs [3]);
+		_color.r = float.Parse(vecs [0]);
+		_color.g = float.Parse(vecs [1]);
+		_color.b = float.Parse(vecs [2]);
+		_color.a = float.Parse(vecs [3]);
 		return _color;
 	}
 }

@@ -30,16 +30,17 @@ public class MatTools  {
 	public static Color planeColoredColor = Color.red;
 
 	
-	public static Color[] colors = new Color[]{
+	public static Color[] colors = new Color[]
+	{
 		Color.red,
-		new Color32(255,125,0,125),   //橙色
+		new Color32(255,125,0,125),//橙色
 		Color.yellow,
 		Color.green,
-		new Color32(125,255,0,125),  // 草绿色
+		new Color32(125,255,0,125),// 草绿色
 		Color.blue,
-		new Color32(125,0,255,255),  // 紫色
+		new Color32(125,0,255,255),// 紫色
 		Color.cyan,
-		new Color32(255,0,255,125),   // 品红
+		new Color32(255,0,255,125),// 品红
 		Color.black,
 		Color.gray,
 		Color.white
@@ -52,7 +53,7 @@ public class MatTools  {
 	public static Material getPlaneMat(Color color)
 	{
 		color.a = 0.5f;
-		Material mat  = Resources.Load("Materials/cutface", typeof(Material)) as Material;
+		Material mat  = Resources.Load("Materials/cutface",typeof(Material)) as Material;
 		mat.color = color;
 		return mat;
 	}

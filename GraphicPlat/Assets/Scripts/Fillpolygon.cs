@@ -14,7 +14,8 @@ public class Fillpolygon{
 		{
 			lineStart = pos1;
 			linend = pos2;
-			if (pos2.y != pos1.y) {
+			if (pos2.y != pos1.y) 
+			{
 				dx = (pos2.x - pos1.x) / (pos2.y - pos1.y);
 			} 
 		}
@@ -36,7 +37,8 @@ public class Fillpolygon{
 	{
 		int lineCount = listPos.Count - 1;
 		polyLines=new polyLine[lineCount];
-		for (int i=0; i<lineCount; i++) {
+		for (int i=0; i<lineCount; i++) 
+		{
 			polyLines[i].setdate(listPos[i],listPos[i+1]);
 		}
 	}

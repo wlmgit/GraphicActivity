@@ -304,7 +304,7 @@ namespace creat_Graphic
 			float miny = posList [0].y;
 			float maxx = posList [0].x;
 			float maxy = posList [0].y;
-			for (int i=0; i<posList.Count; i++)
+			for(int i=0;i<posList.Count;i++)
 			{
 				if(posList[i].x<minx)
 					minx=posList[i].x;

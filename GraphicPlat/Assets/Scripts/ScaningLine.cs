@@ -28,7 +28,7 @@ public class ScaningLine{
 	//	public float area;
 	public List<Vector3> getCrossPos(float scfLine)
 	{
-		List<Vector3> crossPoints = new List<Vector3> ();
+		List<Vector3> crossPoints = new List<Vector3>();
 		for (int i = 0;i < points.Count;i++) 
 		{
 			Vector3 ps = points [i];
@@ -150,7 +150,7 @@ public class ScaningLine{
 		if (a.x != b.x) 
 		{
 			float dx = (b.y - a.y) / (b.x - a.x);
-			x = (y - a.y + dx * a.x) / dx;
+			x = (y - a.y + dx * a.x)/dx;
 		} 
 		else
 			x = a.x;
